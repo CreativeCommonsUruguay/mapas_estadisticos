@@ -1,0 +1,5 @@
+clases-svg:
+  version: 1.x
+  css:
+    base:
+      css/clases-svg.css: {}

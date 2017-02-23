@@ -1,0 +1,15 @@
+mapas_estadisticos.admin_settings:
+  path: '/admin/config/mapas_estadisticos'
+  defaults:
+    _form: '\Drupal\mapas_estadisticos\Form\ModuleConfigurationForm'
+    _title: 'Configuración del módulo Mapas estadísticos'
+  requirements:
+    _permission: 'administer site configuration'
+
+mapas_estadisticos.content:
+  path: '/estadistica/mapa/{nombre}'
+  defaults:
+    _controller: '\Drupal\mapas_estadisticos\Controller\MapaController::content'
+    _title: ''
+  requirements:
+    _permission: 'access content'

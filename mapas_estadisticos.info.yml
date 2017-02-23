@@ -1,0 +1,7 @@
+name: Mapas estadísticos
+description: Configura los diferentes mapas estadísticos
+package: AUTORES
+
+type: module
+core: 8.x
+configure: mapas_estadisticos.admin_settings

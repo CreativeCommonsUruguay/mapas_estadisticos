@@ -1,0 +1,29 @@
+  <svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 684 600'>
+
+    <g transform="scale({{ escala }})">
+
+      <path
+        class='paisSVG' fill='{{ colorFondo }}'
+        d='{{ contorno_exterior }}'/>
+
+
+      {% for i in 1..n_entidades_territoriales %}
+
+      <a xlink:href='{{ base_url }}{{ _context['link' ~ loop.index] }}'>
+        <g class='hover_opacity'>
+          <path
+            class='entidadesSVG' fill='{{ _context['color' ~ loop.index] }}'
+            d='{{ _context['entidad_territorial_contorno' ~ loop.index] }}'/>
+
+          <text
+            class='textEntidadesSVG'
+            x="{{ _context['posicion_texto_x' ~ loop.index] }}"
+            y="{{ _context['posicion_texto_y' ~ loop.index] }}">{{ _context['entidad_territorial_nombre' ~ loop.index] }} ({{ _context['valor' ~ loop.index] }})</text>
+        </g>
+      </a> 
+
+      {% endfor %}
+
+    </g>
+
+  </svg>

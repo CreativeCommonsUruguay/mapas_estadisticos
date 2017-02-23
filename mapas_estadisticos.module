@@ -1,0 +1,35 @@
+<?php
+
+function mapas_estadisticos_theme($existing, $type, $theme, $path) {
+
+  global $base_url;
+
+  $config = \Drupal::service('config.factory')->getEditable('mapas_estadisticos.settings');
+
+  $arreglo['contorno_exterior'] = $config->get('contorno_exterior');
+  $arreglo['n_entidades_territoriales'] = $config->get('n_entidades_territoriales');
+  $arreglo['colorFondo'] = $config->get('colorFondo');
+
+  for ($i = 1; $i <= $config->get('n_entidades_territoriales'); $i++) {
+    $arreglo['entidad_territorial_contorno'.$i] = $config->get('entidad_territorial_contorno'.$i);
+    $arreglo['entidad_territorial_nombre'.$i] = $config->get('entidad_territorial_nombre'.$i);
+    $arreglo['posicion_texto_x'.$i] = $config->get('posicion_texto_x'.$i);
+    $arreglo['posicion_texto_y'.$i] = $config->get('posicion_texto_y'.$i);
+    $arreglo['link'.$i] = $config->get('link'.$i);
+    $arreglo['taxonomia'.$i] = $config->get('taxonomia'.$i);
+    $arreglo['valor'.$i] = NULL;
+    $arreglo['color'.$i] = NULL;
+  }
+
+  $arreglo['base_url'] = $base_url;
+  $arreglo['colorFondo'] = $config->get('colorFondo');
+  $arreglo['colorInicial'] = $config->get('colorInicial');
+  $arreglo['colorFinal'] = $config->get('colorFinal');
+  $arreglo['escala'] = $config->get('escala');
+
+  return array(
+    'svg' => array(
+      'variables' => $arreglo,
+    ),
+  );
+}
