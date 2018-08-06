@@ -1,7 +1,7 @@
 {
     "name": "drupal/mapas_estadisticos",
     "description": "Configura los diferentes mapas estadísticos",
-    "type": "drupal-module",
+    "type": "drupal-custom-module",
     "homepage": "https://github.com/CreativeCommonsUruguay/mapas_estadisticos",
     "license": "GPL",
     "authors": [
