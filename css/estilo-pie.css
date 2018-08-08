@@ -1,0 +1,30 @@
+@media (max-width: 600px) {
+    .chart-container {
+          width:100%;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+    .chart-container {
+          width:80%;
+    }
+}
+
+
+@media (min-width: 1200px) {
+    .chart-container {
+          width:60%;
+    }
+}
+
+.chart-container {
+  height:100%;
+  border: 1px dotted silver;
+  margin:auto;
+  padding: 20px;
+}
+
+svg text{
+font-size: 1em;
+font-family: sans-serif;
+}

@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Url;
+  
 function mapas_estadisticos_theme($existing, $type, $theme, $path) {
 
   global $base_url;
@@ -28,8 +30,474 @@ function mapas_estadisticos_theme($existing, $type, $theme, $path) {
   $arreglo['escala'] = $config->get('escala');
 
   return array(
-    'svg' => array(
+    'mapas-svg' => array(
+      'variables' => $arreglo,
+    ),
+    'pie-svg' => array(
+      'variables' => $arreglo,
+    ),
+    'flot-svg' => array(
       'variables' => $arreglo,
     ),
   );
+}
+
+function mapas_estadisticos_page_attachments_alter(&$page) {
+
+    $current_url = \Drupal\Core\Url::fromRoute('<current>');
+    $path = $current_url->toString();
+    $segments = explode("/", $path);
+    $page_name = end($segments);
+
+    $alter_pie=false;
+    $alter_flot=false;
+
+    switch ($page_name) {
+
+        case 'autores-por-sexo':
+            $alter_pie=true;
+
+            $labels[1] = "Hombres";
+            $query = \Drupal::entityQuery('node');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_sexo.entity.tid', '21')
+                ->execute());
+
+            $labels[2] = "Mujeres";
+            $query = \Drupal::entityQuery('node');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_sexo.entity.tid', '22')
+                ->execute());
+        break;
+        
+        case 'estatus-derecho-de-autor':
+            $alter_pie=true;
+            $labels[1] = "Dominio publico";
+            $query = \Drupal::entityQuery('node');
+            $group1 = $query->orConditionGroup()
+                ->condition('field_estatusderechos.entity.name', '0')
+                ->condition('field_estatusderechos.entity.name', '11')
+                ->condition('field_estatusderechos.entity.name', '4')
+                ->condition('field_estatusderechos.entity.name', '6')
+                ->condition('field_estatusderechos.entity.name', '9');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group1)
+                ->execute());
+
+            $labels[2] = "Dominio privado";
+            $query = \Drupal::entityQuery('node');
+            $group2 = $query->orConditionGroup()
+                ->condition('field_estatusderechos.entity.name', '1')
+                ->condition('field_estatusderechos.entity.name', '2')
+                ->condition('field_estatusderechos.entity.name', '7');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group2)
+                ->execute());
+
+            $labels[3] = "Estatus desconocido";
+            $query = \Drupal::entityQuery('node');
+            $group3 = $query->orConditionGroup()
+                ->condition('field_estatusderechos.entity.name', '10')
+                ->condition('field_estatusderechos.entity.name', '12')
+                ->condition('field_estatusderechos.entity.name', '3')
+                ->condition('field_estatusderechos.entity.name', '5')
+                ->condition('field_estatusderechos.entity.name', '8');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group3)
+                ->execute());
+
+        break;
+
+        case 'autores-por-disciplina':
+            $alter_pie=true;
+            $labels[1] = "Escritura";
+            $query = \Drupal::entityQuery('node');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '1')
+                ->execute());
+
+            $labels[2] = "Artes visuales";
+            $query = \Drupal::entityQuery('node');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '2')
+                ->execute());
+
+            $labels[3] = "Música";
+            $query = \Drupal::entityQuery('node');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '4')
+                ->execute());
+
+            $labels[4] = "Artes escénicas";
+            $query = \Drupal::entityQuery('node');
+            $ids[4] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '12')
+                ->execute());
+                
+            $labels[5] = "Audiovisual";
+            $query = \Drupal::entityQuery('node');
+            $ids[5] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '13')
+                ->execute());
+
+        break;
+
+        case 'escritores-de-ficcion':
+            $alter_pie=true;
+
+            $labels[1] = "Dramaturgia";
+            $query = \Drupal::entityQuery('node');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '121')
+                ->execute());
+
+            $labels[2] = "Narrativa";
+            $query = \Drupal::entityQuery('node');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '122')
+                ->execute());
+                
+            $labels[3] = "Poesía";
+            $query = \Drupal::entityQuery('node');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '120')
+                ->execute());
+
+            $labels[4] = "Crónica";
+            $query = \Drupal::entityQuery('node');
+            $ids[4] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '156')
+                ->execute());
+
+        break;
+     
+        case 'escritores-de-no-ficcion':
+            $alter_pie=true;
+
+            $labels[1] = "Artes y humanidades";
+            $query = \Drupal::entityQuery('node');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '800')
+                ->execute());
+
+            $labels[2] = "Ciencias aplicadas";
+            $query = \Drupal::entityQuery('node');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '801')
+                ->execute());
+
+            $labels[3] = "Ciencias biológicas";
+            $query = \Drupal::entityQuery('node');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '802')
+                ->execute());
+
+            $labels[4] = "Ciencias físicas";
+            $query = \Drupal::entityQuery('node');
+            $ids[4] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '803')
+                ->execute());
+                
+            $labels[5] = "Ciencias formales";
+            $query = \Drupal::entityQuery('node');
+            $ids[5] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '804')
+                ->execute());
+
+            $labels[6] = "Ciencias sociales";
+            $query = \Drupal::entityQuery('node');
+            $ids[6] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '805')
+                ->execute());
+
+            $labels[7] = "No ficción";
+            $query = \Drupal::entityQuery('node');
+            $ids[7] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '123')
+                ->execute());
+        break;
+
+
+        case 'escritores-de-ficcion-y-no-ficcion':
+            $alter_pie=true;
+            $labels[1] = "Ficción";
+            $query = \Drupal::entityQuery('node');
+            $group1 = $query->orConditionGroup()
+                ->condition('field_disciplinaautoral.entity.tid', '121')
+                ->condition('field_disciplinaautoral.entity.tid', '122')
+                ->condition('field_disciplinaautoral.entity.tid', '120')
+                ->condition('field_disciplinaautoral.entity.tid', '156');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group1)
+                ->execute());
+
+            $labels[2] = "No ficción";
+            $query = \Drupal::entityQuery('node');
+            $group2 = $query->orConditionGroup()
+                ->condition('field_disciplinaautoral.entity.tid', '800')
+                ->condition('field_disciplinaautoral.entity.tid', '801')
+                ->condition('field_disciplinaautoral.entity.tid', '802')
+                ->condition('field_disciplinaautoral.entity.tid', '803')
+                ->condition('field_disciplinaautoral.entity.tid', '804')
+                ->condition('field_disciplinaautoral.entity.tid', '805')
+                ->condition('field_disciplinaautoral.entity.tid', '123');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group2)
+                ->execute());
+
+            $labels[3] = "Periodismo";
+            $query = \Drupal::entityQuery('node');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '127')
+                ->execute());
+                
+            $labels[4] = "Traducción";
+            $query = \Drupal::entityQuery('node');
+            $ids[4] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '125')
+                ->execute());
+
+            $labels[5] = "Otras";
+            $query = \Drupal::entityQuery('node');
+            $ids[5] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '124')
+                ->execute());
+                
+        break;
+
+        case 'artistas-visuales':
+            $alter_pie=true;
+
+            $labels[1] = "Arquitectura";
+            $query = \Drupal::entityQuery('node');
+            $ids[1] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '115')
+                ->execute());
+
+            $labels[2] = "Cerámica";
+            $query = \Drupal::entityQuery('node');
+            $ids[2] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '117')
+                ->execute());
+                
+            $labels[3] = "Dibujo";
+            $query = \Drupal::entityQuery('node');
+            $ids[3] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '112')
+                ->execute());
+                
+            $labels[4] = "Escultura";
+            $query = \Drupal::entityQuery('node');
+            $ids[4] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '114')
+                ->execute());
+
+            $labels[5] = "Fotografía";
+            $query = \Drupal::entityQuery('node');
+            $ids[5] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '459')
+                ->execute());
+                
+            $labels[6] = "Grabado";
+            $query = \Drupal::entityQuery('node');
+            $ids[6] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '113')
+                ->execute());
+
+            $labels[7] = "Pintura";
+            $query = \Drupal::entityQuery('node');
+            $ids[7] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition('field_disciplinaautoral.entity.tid', '111')
+                ->execute());
+             
+            $labels[8] = "Otras"; // Agrupo tapiz, orfebreria, diseño gráfico y otras en otras.
+            $query = \Drupal::entityQuery('node');
+            $group2 = $query->orConditionGroup()
+                ->condition('field_disciplinaautoral.entity.tid', '118')
+                ->condition('field_disciplinaautoral.entity.tid', '180')
+                ->condition('field_disciplinaautoral.entity.tid', '460')
+                ->condition('field_disciplinaautoral.entity.tid', '954');
+            $ids[8] = count($query
+                ->condition('type', 'autor')
+                ->condition('status', 1)
+                ->condition($group2)
+                ->execute());
+                
+        break;
+
+        case 'total-acumulado-de-autores':
+            $alter_flot=true;
+
+            $datosh = "";
+            $datosm = "";
+            $datost = "";
+        
+            $anioCota = date ("Y") - 15;
+            for ($i = 1800; $i <= $anioCota; $i+=10) {
+
+                $query = \Drupal::entityQuery('node');
+                $h = count($query
+                    ->condition('type', 'autor')
+                    ->condition('status', 1)
+                    ->condition('field_sexo.entity.tid', '21')
+                    ->condition('field_ano_de_nacimiento.value', $i, '<')
+                    ->execute());
+
+                $query = \Drupal::entityQuery('node');
+                $m = count($query
+                    ->condition('type', 'autor')
+                    ->condition('status', 1)
+                    ->condition('field_sexo.entity.tid', '22')
+                    ->condition('field_ano_de_nacimiento.value', $i, '<')
+                    ->execute());
+
+
+                $datosh.= "[".$i.", ".$h."],";
+                $datosm.= "[".$i.", ".$m."],";
+                $datost.= "[".$i.", ".($m+$h)."],";
+            }
+            $datosh=rtrim($datosh,",");
+            $datosm=rtrim($datosm,",");
+            $datost=rtrim($datost,",");
+        
+        break;
+
+        case 'nacimientos-de-autores-por-ano':
+            $alter_flot=true;
+
+            $datosh = "";
+            $datosm = "";
+            $datost = "";
+            $hlapso = 0;
+            $mlapso = 0;
+            $tlapso = 0;
+        
+            $anioCota = date ("Y") - 15;
+            for ($i = 1760; $i <= $anioCota; $i+=2) {
+
+                $query = \Drupal::entityQuery('node');
+                $h = count($query
+                    ->condition('type', 'autor')
+                    ->condition('status', 1)
+                    ->condition('field_sexo.entity.tid', '21')
+                    ->condition('field_ano_de_nacimiento.value', $i, '<')
+                    ->execute());
+
+                $query = \Drupal::entityQuery('node');
+                $m = count($query
+                    ->condition('type', 'autor')
+                    ->condition('status', 1)
+                    ->condition('field_sexo.entity.tid', '22')
+                    ->condition('field_ano_de_nacimiento.value', $i, '<')
+                    ->execute());
+
+                $datosh.= "[".$i.", ".($h-$hlapso)."],";
+                $datosm.= "[".$i.", ".($m-$mlapso)."],";
+                $datost.= "[".$i.", ".($m+$h-$tlapso)."],";
+
+                $hlapso = $h;
+                $mlapso = $m;
+                $tlapso = $m+$h;
+
+            }
+            $datosh=rtrim($datosh,",");
+            $datosm=rtrim($datosm,",");
+            $datost=rtrim($datost,",");
+        break;
+    }
+
+
+
+
+    if ($alter_pie) {
+        $total=0;
+        foreach ($ids as $id) {
+            $total=$total+$id;
+        }
+
+        $datos="";
+        for ($i = 1; $i <= count($ids); $i++) {
+            $valor[$i] = round($ids[$i]/$total*100, 1);
+            $datos.= "{ name: '".$labels[$i]." : ".$ids[$i]."', percent: '".$valor[$i]."' },";
+        }
+        $datos=rtrim($datos,",");
+  
+        $page['#attached']['drupalSettings']['mapas_estadisticos']['clases_pie']['datos'] = "[".$datos."]";
+        $page['#attached']['drupalSettings']['mapas_estadisticos']['clases_pie']['posicion_bullets'] = -(count($ids)*15)+ 20;
+
+    }  
+
+    if ($alter_flot) {
+        
+        $page['#attached']['drupalSettings']['mapas_estadisticos']['clases_flot']['datosh'] = "[".$datosh."]";
+        $page['#attached']['drupalSettings']['mapas_estadisticos']['clases_flot']['datosm'] = "[".$datosm."]";
+        $page['#attached']['drupalSettings']['mapas_estadisticos']['clases_flot']['datost'] = "[".$datost."]";
+    }  
+    
 }

@@ -3,3 +3,28 @@ clases-svg:
   css:
     base:
       css/clases-svg.css: {}
+      
+clases-pie:
+  version: 1.x
+  css:
+    base:
+      css/estilo-pie.css: {}
+  js:
+    js/d3.v3.min.js: {}
+    js/grafica-torta.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+
+clases-flot:
+  version: 1.x
+  css:
+    base:
+      css/flot.css: {}
+  js:
+    js/jquery.flot.js: {}
+    js/excanvas.min.js: {}
+    js/datos-flot.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings

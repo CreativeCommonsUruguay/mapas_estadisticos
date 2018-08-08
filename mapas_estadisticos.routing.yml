@@ -7,7 +7,7 @@ mapas_estadisticos.admin_settings:
     _permission: 'administer site configuration'
 
 mapas_estadisticos.content:
-  path: '/estadistica/mapa/{nombre}'
+  path: '/estadistica/{nombre}'
   defaults:
     _controller: '\Drupal\mapas_estadisticos\Controller\MapaController::content'
     _title: ''
